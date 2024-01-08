@@ -1,5 +1,7 @@
 # The effect of Alzheimer's disease and its progression on pyramidal cell gain and connectivity underlying mismatch negativity responses
-_This code accompanies Lanskey et al. (2024). The code runs on Matlab 2020b and uses SPM12 v7771, which is freely available:
+_This code accompanies Lanskey et al. (2024)._
+
+The code runs on Matlab 2020b and uses SPM12 v7771, which is freely available:
 * [Statistic Parametric Mapping](http://www.fil.ion.ucl.ac.uk/spm/)
 
 ## Analysis steps
