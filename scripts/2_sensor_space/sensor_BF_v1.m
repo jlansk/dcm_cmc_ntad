@@ -3,10 +3,6 @@
 %(controls vs AD/MCI) and longitudinal (AD/MCI baseline vs follow up)
 %comparisons and generates mismatch negativity waveform plots.
 
-%v2 - longitudinal ANOVA adjusted to make session within-subject rather than between (as it is
-%a longitudinal ANOVA)
-
-
 % set up variables
 clearvars
 E = cmc_environment;
