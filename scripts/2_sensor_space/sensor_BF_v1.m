@@ -3,6 +3,9 @@
 %(controls vs AD/MCI) and longitudinal (AD/MCI baseline vs follow up)
 %comparisons and generates mismatch negativity waveform plots.
 
+%v2 - longitudinal ANOVA adjusted to make session within-subject rather than between (as it is
+%a longitudinal ANOVA)
+
 
 % set up variables
 clearvars
@@ -43,7 +46,7 @@ LBsubs = find(contains(BLsubs, Lsubs));
 LAsubs = find(contains(AFsubs, Lsubs));
 
 
-[h,p,ci,stats]=ttest2(mmn_pa_BL(LBsubs,1),mmn_pa_AF(LAsubs,1), 'tail','left');
+[h,p,ci,stats]=ttest(mmn_pa_BL(LBsubs,1),mmn_pa_AF(LAsubs,1), 'tail','left');
 bnanmean=nanmean(mmn_pa_BL(LBsubs,1)); fnanmean=nanmean(mmn_pa_AF(LAsubs,1));
 
 AFstatistics(1,1)=stats.tstat; AFstatistics(2,1)=p; AFstatistics(3,1)=bnanmean; AFstatistics(4,1)=fnanmean;
@@ -73,44 +76,18 @@ trial = table([1 2 3 4 5 6]', 'VariableNames', {'trial'});
 rm = fitrm(t, 'rep0-rep5~group+age', 'WithinDesign', trial);
 ranovatbl=ranova(rm);
 
-
 %% Longitudinal
+mmn_pa_BF = [mmn_pa_BL_ERF(LBsubs,1:6), mmn_pa_AF_ERF(LAsubs,1:6)];
 
-% Longitudinal
-mmn_pa_BF = [mmn_pa_BL_ERF(LBsubs,1:11); mmn_pa_AF_ERF(LAsubs,1:11)];
-group_BF(1:length(LBsubs), 1) = 0;
-group_BF(length(LBsubs)+1:length(LBsubs)*2, 1) = 1;
+t2 = table(mmn_pa_BF(:,1), mmn_pa_BF(:,2), mmn_pa_BF(:,3), mmn_pa_BF(:,4), mmn_pa_BF(:,5), mmn_pa_BF(:,6), mmn_pa_BF(:,7), mmn_pa_BF(:,8), mmn_pa_BF(:,9), mmn_pa_BF(:,10), mmn_pa_BF(:,11), mmn_pa_BF(:,12),'VariableNames', {'Brep0', 'Brep1', 'Brep2', 'Brep3', 'Brep4', 'Brep5', 'Lrep0', 'Lrep1', 'Lrep2', 'Lrep3', 'Lrep4', 'Lrep5'});
+WithinStruct = table([1 1 1 1 1 1 2 2 2 2 2 2]', [1 2 3 4 5 6 1 2 3 4 5 6]', 'VariableNames', {'Session', 'Trial'});
+WithinStruct.Treatment = categorical(WithinStruct.Session);
+WithinStruct.Trial = categorical(WithinStruct.Trial);
 
-t2 = table(mmn_pa_BF(:,1), mmn_pa_BF(:,2), mmn_pa_BF(:,3), mmn_pa_BF(:,4), mmn_pa_BF(:,5), mmn_pa_BF(:,6), group_BF(:,1), 'VariableNames', {'rep0', 'rep1', 'rep2', 'rep3', 'rep4', 'rep5', 'group'});
-trial2 = table([1 2 3 4 5 6]', 'VariableNames', {'trial'});
-rm2 = fitrm(t2, 'rep0-rep5~group', 'WithinDesign', trial2);
-ranovatbl2=ranova(rm2);
-
-
-% Longitudinal controlling for days 
-Bsubs=BLsubs(LBsubs);
-load([scr '/days_af-bl.mat']) %should load into a variable called 'days'
-
-Lsubs=BLsubs(LBsubs);
-for ss=1:length(Lsubs)
-    idx=find(contains(days(:,1),Lsubs(ss)));
-    LX(ss,2) = 0;
-    LX(length(Lsubs)+ss,2) = (days{idx,2}/365.2425);
-end
-LX(length(Lsubs)+1:length(Lsubs)+ss,2)=zscore(LX(length(Lsubs)+1:length(Lsubs)+ss,2));
-
-mmn_pa_BF=    [mmn_pa_BL_ERF(LBsubs,1:10); mmn_pa_AF_ERF(LAsubs,1:10)];
-mmn_pa_BF(1:length(LBsubs), 12) = 0;
-mmn_pa_BF(length(LBsubs)+1:end, 12) = 1;
-
-t2 = table(mmn_pa_BF(:,1), mmn_pa_BF(:,2), mmn_pa_BF(:,3), mmn_pa_BF(:,4), mmn_pa_BF(:,5), mmn_pa_BF(:,6), mmn_pa_BF(:,12), LX(:,2), 'VariableNames', {'rep0', 'rep1', 'rep2', 'rep3', 'rep4', 'rep5', 'group', 'days'});
-trial = table([1 2 3 4 5 6]', 'VariableNames', {'trial'});
-rm2 = fitrm(t2, 'rep0-rep5~group+days', 'WithinDesign', trial);
-ranovatbl2days=ranova(rm2);
-
+rm = fitrm(t2, 'Brep0,Brep1,Brep2,Brep3,Brep4,Brep5,Lrep0,Lrep1,Lrep2,Lrep3,Lrep4,Lrep5~1', 'WithinDesign', WithinStruct);
+ranovatable = ranova(rm, 'WithinModel', 'Session*Trial');
 
 %% bar charts - June 22
-
 % Baseline control vs patients average ERF between 140-160ms for all tones
 CP_pa(:,1) = nanmean(mmn_pa_BL_ERF(cons,1:11),1);
 CP_pa(:,2) = nanmean(mmn_pa_BL_ERF(pats,1:11),1);
