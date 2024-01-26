@@ -83,7 +83,7 @@ WithinStruct.Trial = categorical(WithinStruct.Trial);
 rm = fitrm(t2, 'Brep0,Brep1,Brep2,Brep3,Brep4,Brep5,Lrep0,Lrep1,Lrep2,Lrep3,Lrep4,Lrep5~1', 'WithinDesign', WithinStruct);
 ranovatable = ranova(rm, 'WithinModel', 'Session*Trial');
 
-%% bar charts - June 22
+%% bar charts
 % Baseline control vs patients average ERF between 140-160ms for all tones
 CP_pa(:,1) = nanmean(mmn_pa_BL_ERF(cons,1:11),1);
 CP_pa(:,2) = nanmean(mmn_pa_BL_ERF(pats,1:11),1);
