@@ -120,7 +120,7 @@ con_se=squeeze(nanstd(mmnBL(cons,:,:),1))./sqrt(size(cons,2))%standard error
 pat_av = squeeze(nanmean(mmnBL(pats,:,:),1))
 pat_se = squeeze(nanstd(mmnBL(pats,:,:),1))./sqrt(size(pats,2))
 
-%% repetition plots seperately and saved for aruk east
+%% repetition plots
 
 titlestr={'MMN_r1r0'};
 choice = menu('Save figures?', 'Yes', 'No');
