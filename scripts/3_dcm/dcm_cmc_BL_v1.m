@@ -92,10 +92,7 @@ end
 
 if plot_line == 1
     
-    dcms = cellstr(spm_select('FPList', [anaB filesep], '^*full*.mat'));
-    dcms = spm_dcm_load(dcms);
     figure
-    title('Model fit');
     
     for ss = 1:length(subjects)
         try
